@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - WitchLink</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="dashboard">
+        <nav class="navbar">
+            <div class="nav-brand">🔗 WitchLink</div>
+            <div class="nav-menu">
+                <a href="/dashboard" class="nav-link active">Dashboard</a>
+                <a href="/dashboard/profile" class="nav-link">Profile</a>
+                <a th:href="@{'/u/' + ${user.username}}" class="nav-link" target="_blank">View Page</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-small">Logout</button>
+                </form>
+            </div>
+        </nav>
+        
+        <div class="dashboard-content">
+            <header class="dashboard-header">
+                <h1>Welcome, <span th:text="${user.displayName}"></span>!</h1>
+                <a href="/dashboard/links/new" class="btn btn-primary">+ Add New Link</a>
+            </header>
+            
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Links</h3>
+                    <p class="stat-number" th:text="${#lists.size(links)}">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Links</h3>
+                    <p class="stat-number" th:text="${activeLinksCount}">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Clicks</h3>
+                    <p class="stat-number" th:text="${totalClicks}">0</p>
+                </div>
+            </div>
+            
+            <div class="links-section">
+                <h2>Your Links</h2>
+                
+                <div th:if="${#lists.isEmpty(links)}" class="empty-state">
+                    <p>You haven't created any links yet.</p>
+                    <a href="/dashboard/links/new" class="btn btn-primary">Create Your First Link</a>
+                </div>
+                
+                <div class="links-list" th:if="${not #lists.isEmpty(links)}">
+                    <div class="link-item" th:each="link : ${links}">
+                        <div class="link-info">
+                            <span class="link-icon" th:if="${link.icon}" th:text="${link.icon}">🔗</span>
+                            <span class="link-icon" th:if="${link.icon == null}">🔗</span>
+                            <div class="link-details">
+                                <h3 th:text="${link.title}">Link Title</h3>
+                                <a th:href="${link.url}" target="_blank" class="link-url" th:text="${link.url}">URL</a>
+                                <div class="link-meta">
+                                    <span th:classappend="${link.isActive} ? 'status-active' : 'status-inactive'">
+                                        <span th:text="${link.isActive ? '✓ Active' : '✗ Inactive'}"></span>
+                                    </span>
+                                    <span>👁 <span th:text="${link.clickCount}">0</span> clicks</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="link-actions">
+                            <a th:href="@{'/dashboard/links/' + ${link.id} + '/edit'}" class="btn btn-small">Edit</a>
+                            <form th:action="@{'/dashboard/links/' + ${link.id} + '/delete'}" method="post" 
+                                  style="display: inline;" 
+                                  onsubmit="return confirm('Are you sure you want to delete this link?');">
+                                <button type="submit" class="btn btn-small btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-preview">
+                <h2>Your Profile URL</h2>
+                <div class="url-display">
+                    <input type="text" th:value="${profileUrl}" readonly id="profileUrl">
+                    <button onclick="copyProfileUrl()" class="btn btn-small">Copy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function copyProfileUrl() {
+            const input = document.getElementById('profileUrl');
+            input.select();
+            document.execCommand('copy');
+            alert('Profile URL copied to clipboard!');
+        }
+    </script>
+</body>
+</html>

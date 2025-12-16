@@ -1,0 +1,194 @@
+/* Profile Page Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Default Theme */
+body.default {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+body.dark {
+    background: linear-gradient(135deg, #1f1f1f 0%, #2d2d2d 100%);
+}
+
+body.ocean {
+    background: linear-gradient(135deg, #2E3192 0%, #1BFFFF 100%);
+}
+
+body.sunset {
+    background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);
+}
+
+body.forest {
+    background: linear-gradient(135deg, #134e5e 0%, #71b280 100%);
+}
+
+.profile-container {
+    max-width: 680px;
+    width: 100%;
+    margin: 20px;
+    padding: 40px 30px;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.profile-image {
+    margin-bottom: 20px;
+}
+
+.profile-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    background: white;
+    border-radius: 50%;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #667eea;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.profile-avatar span {
+    text-transform: uppercase;
+}
+
+.profile-image img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.profile-header h1 {
+    color: white;
+    font-size: 2rem;
+    margin: 15px 0 5px 0;
+    font-weight: 700;
+}
+
+.profile-username {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.profile-bio {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1rem;
+    line-height: 1.6;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.links-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.empty-profile {
+    text-align: center;
+    padding: 60px 20px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.profile-link {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px 25px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    text-decoration: none;
+    color: #1f2937;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    background: white;
+}
+
+.profile-link .link-icon {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+}
+
+.link-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.link-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.link-description {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+.link-arrow {
+    font-size: 1.5rem;
+    color: #9ca3af;
+    flex-shrink: 0;
+}
+
+.profile-footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+}
+
+.profile-footer p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
+
+.profile-footer a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.profile-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 30px 20px;
+        margin: 10px;
+    }
+    
+    .profile-header h1 {
+        font-size: 1.6rem;
+    }
+    
+    .profile-link {
+        padding: 16px 20px;
+    }
+    
+    .link-title {
+        font-size: 1rem;
+    }
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - WitchLink</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="dashboard">
+        <nav class="navbar">
+            <div class="nav-brand">🔗 WitchLink</div>
+            <div class="nav-menu">
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/dashboard/profile" class="nav-link active">Profile</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-small">Logout</button>
+                </form>
+            </div>
+        </nav>
+        
+        <div class="dashboard-content">
+            <div class="form-container">
+                <h1>Edit Profile</h1>
+                
+                <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                
+                <form th:action="@{/dashboard/profile}" method="post" class="profile-form">
+                    <div class="form-group">
+                        <label for="displayName">Display Name *</label>
+                        <input type="text" id="displayName" name="displayName" required 
+                               th:value="${user.displayName}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bio">Bio</label>
+                        <textarea id="bio" name="bio" rows="4" 
+                                  placeholder="Tell people about yourself"
+                                  th:text="${user.bio}"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="theme">Theme</label>
+                        <select id="theme" name="theme">
+                            <option value="default" th:selected="${user.theme == 'default'}">Default</option>
+                            <option value="dark" th:selected="${user.theme == 'dark'}">Dark</option>
+                            <option value="ocean" th:selected="${user.theme == 'ocean'}">Ocean</option>
+                            <option value="sunset" th:selected="${user.theme == 'sunset'}">Sunset</option>
+                            <option value="forest" th:selected="${user.theme == 'forest'}">Forest</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Profile Information</label>
+                        <p><strong>Username:</strong> <span th:text="${user.username}"></span></p>
+                        <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+                        <p><strong>Member since:</strong> <span th:text="${#temporals.format(user.createdAt, 'MMM dd, yyyy')}"></span></p>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <a href="/dashboard" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

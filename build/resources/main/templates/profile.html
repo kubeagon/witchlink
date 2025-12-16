@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${user.displayName} + ' - WitchLink'">Profile</title>
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+</head>
+<body th:class="${user.theme != null ? user.theme : 'default'}">
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-image">
+                <span th:if="${user.profileImage == null}" class="profile-avatar">
+                    <span th:text="${#strings.substring(user.displayName, 0, 1)}">A</span>
+                </span>
+                <img th:if="${user.profileImage != null}" th:src="${user.profileImage}" alt="Profile">
+            </div>
+            <h1 th:text="${user.displayName}">Display Name</h1>
+            <p class="profile-username">@<span th:text="${user.username}">username</span></p>
+            <p class="profile-bio" th:if="${user.bio != null}" th:text="${user.bio}">Bio goes here</p>
+        </div>
+        
+        <div class="links-container">
+            <div th:if="${#lists.isEmpty(links)}" class="empty-profile">
+                <p>No links available yet</p>
+            </div>
+            
+            <a th:each="link : ${links}" 
+               th:href="${link.url}" 
+               class="profile-link" 
+               target="_blank"
+               th:onclick="'trackClick(' + ${link.id} + ')'">
+                <span class="link-icon" th:if="${link.icon}" th:text="${link.icon}">🔗</span>
+                <span class="link-content">
+                    <span class="link-title" th:text="${link.title}">Link Title</span>
+                    <span class="link-description" th:if="${link.description != null}" th:text="${link.description}"></span>
+                </span>
+                <span class="link-arrow">→</span>
+            </a>
+        </div>
+        
+        <footer class="profile-footer">
+            <p>
+                <a href="/">Powered by WitchLink</a>
+            </p>
+        </footer>
+    </div>
+    
+    <script>
+        function trackClick(linkId) {
+            fetch('/api/links/' + linkId + '/click', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+        }
+    </script>
+</body>
+</html>
