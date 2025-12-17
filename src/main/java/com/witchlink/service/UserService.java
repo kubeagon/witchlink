@@ -30,6 +30,13 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
+        
+        // Make the first user an admin automatically
+        long userCount = userRepository.count();
+        if (userCount == 0) {
+            user.setRole("ADMIN");
+        }
+        
         return userRepository.save(user);
     }
     
@@ -45,6 +52,10 @@ public class UserService {
         return userRepository.findAll();
     }
     
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+    
     @Transactional
     public User updateUser(User user) {
         user.setUpdatedAt(LocalDateTime.now());
@@ -54,6 +65,16 @@ public class UserService {
     @Transactional
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+    
+    @Transactional
+    public void deleteById(Long id) {
+        userRepository.deleteById(id);
+    }
+    
+    @Transactional
+    public User save(User user) {
+        return userRepository.save(user);
     }
     
     public boolean existsByUsername(String username) {

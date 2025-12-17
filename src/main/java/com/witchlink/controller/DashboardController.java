@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +40,7 @@ public class DashboardController {
         model.addAttribute("activeLinksCount", activeLinksCount);
         model.addAttribute("totalClicks", totalClicks);
         model.addAttribute("profileUrl", "/u/" + user.getUsername());
+        model.addAttribute("isAdmin", "ADMIN".equals(user.getRole()));
         
         return "dashboard";
     }
@@ -50,6 +53,7 @@ public class DashboardController {
         }
         
         model.addAttribute("user", user);
+        model.addAttribute("isAdmin", "ADMIN".equals(user.getRole()));
         return "profile-edit";
     }
     
@@ -127,7 +131,7 @@ public class DashboardController {
                             @RequestParam String url,
                             @RequestParam(required = false) String description,
                             @RequestParam(required = false) String icon,
-                            @RequestParam Boolean isActive,
+                            @RequestParam(required = false, defaultValue = "false") Boolean isActive,
                             RedirectAttributes redirectAttributes) {
         User user = getCurrentUser(authentication);
         if (user == null) {
@@ -166,6 +170,28 @@ public class DashboardController {
         }
         
         return "redirect:/dashboard";
+    }
+    
+    @PostMapping("/links/{id}/toggle")
+    @ResponseBody
+    public ResponseEntity<Void> toggleLinkStatus(@PathVariable Long id,
+                                                 @RequestParam Boolean isActive,
+                                                 Authentication authentication) {
+        User user = getCurrentUser(authentication);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        Optional<Link> linkOpt = linkService.findById(id);
+        if (linkOpt.isEmpty() || !linkOpt.get().getUser().getId().equals(user.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        
+        Link link = linkOpt.get();
+        link.setIsActive(isActive);
+        linkService.updateLink(link);
+        
+        return ResponseEntity.ok().build();
     }
     
     private User getCurrentUser(Authentication authentication) {

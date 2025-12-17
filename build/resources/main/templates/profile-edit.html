@@ -5,14 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile - WitchLink</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        body.dark-mode {
+            background: #1a1a2e;
+            color: #ffffff;
+        }
+        
+        body.dark-mode .dashboard {
+            background: #1a1a2e;
+        }
+        
+        body.dark-mode .navbar {
+            background: #16213e;
+            color: #ffffff;
+        }
+        
+        body.dark-mode .nav-brand,
+        body.dark-mode .nav-link {
+            color: #ffffff;
+        }
+        
+        body.dark-mode .dashboard-content,
+        body.dark-mode .form-container {
+            background: #16213e;
+            color: #ffffff;
+        }
+        
+        body.dark-mode .form-group label {
+            color: #ffffff;
+        }
+        
+        body.dark-mode input,
+        body.dark-mode textarea,
+        body.dark-mode select {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            color: inherit;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            font-size: 0.9rem;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
 </head>
 <body>
+    <button class="theme-toggle" onclick="toggleDarkMode()">Dark Mode</button>
+    
     <div class="dashboard">
         <nav class="navbar">
-            <div class="nav-brand">🔗 WitchLink</div>
+            <div class="nav-brand">WitchLink</div>
             <div class="nav-menu">
                 <a href="/dashboard" class="nav-link">Dashboard</a>
                 <a href="/dashboard/profile" class="nav-link active">Profile</a>
+                <a th:if="${isAdmin}" href="/admin" class="nav-link" style="color: #f093fb;">Admin</a>
                 <form th:action="@{/logout}" method="post" style="display: inline;">
                     <button type="submit" class="btn btn-small">Logout</button>
                 </form>
@@ -65,5 +129,20 @@
             </div>
         </div>
     </div>
+    
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            document.querySelector('.theme-toggle').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+        }
+        
+        // Load saved preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.querySelector('.theme-toggle').textContent = 'Light Mode';
+        }
+    </script>
 </body>
 </html>

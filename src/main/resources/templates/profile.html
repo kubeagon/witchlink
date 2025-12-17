@@ -30,7 +30,7 @@
                class="profile-link" 
                target="_blank"
                th:onclick="'trackClick(' + ${link.id} + ')'">
-                <span class="link-icon" th:if="${link.icon}" th:text="${link.icon}">🔗</span>
+                <span class="link-icon" th:if="${link.icon}" th:text="${link.icon}"></span>
                 <span class="link-content">
                     <span class="link-title" th:text="${link.title}">Link Title</span>
                     <span class="link-description" th:if="${link.description != null}" th:text="${link.description}"></span>

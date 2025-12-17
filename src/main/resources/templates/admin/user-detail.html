@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title th:text="${user.username} + ' - User Details'">User Details</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        body.dark-mode {
+            background: #1a1a2e;
+            color: #ffffff;
+        }
+        
+        body.dark-mode .container {
+            background: #16213e;
+            color: #ffffff;
+        }
+        
+        body.dark-mode .admin-nav a {
+            color: #ffffff;
+        }
+        
+        body.dark-mode .admin-nav a.active {
+            color: #ffffff;
+        }
+        
+        body.dark-mode .stat-value,
+        body.dark-mode .stat-label,
+        body.dark-mode .detail-label,
+        body.dark-mode .detail-value,
+        body.dark-mode .badge,
+        body.dark-mode .link-title,
+        body.dark-mode .link-url,
+        body.dark-mode .link-stats {
+            color: #ffffff;
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            color: inherit;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .admin-nav {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .admin-nav a {
+            color: #000000;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .admin-nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .admin-nav a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #000000;
+        }
+        
+        .user-details {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 2rem;
+        }
+        
+        .detail-row {
+            display: flex;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: bold;
+            width: 200px;
+            color: #000000;
+        }
+        
+        .detail-value {
+            flex: 1;
+            color: #000000;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #000000;
+        }
+        
+        .badge-admin {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .badge-user {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .badge-active {
+            background: #10b981;
+        }
+        
+        .badge-inactive {
+            background: #ef4444;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+            color: #000000;
+        }
+        
+        .stat-label {
+            color: #000000;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .links-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .link-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .link-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            gap: 1rem;
+        }
+        
+        .link-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #000000;
+        }
+        
+        .link-url {
+            color: #000000;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+        
+        .link-stats {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleDarkMode()">Dark Mode</button>
+    
+    <div class="container">
+        <div class="header">
+            <h1 th:text="${user.username}">User Details</h1>
+            <div class="header-actions">
+                <a href="/admin/users" class="btn-secondary">← Back to Users</a>
+            </div>
+        </div>
+
+        <nav class="admin-nav">
+            <a href="/admin">Overview</a>
+            <a href="/admin/users">Users</a>
+            <a href="/dashboard" style="margin-left: auto;">← Exit Admin</a>
+        </nav>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Links</div>
+                <div class="stat-value" th:text="${#lists.size(links)}">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Links</div>
+                <div class="stat-value" th:text="${activeLinks}">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Clicks</div>
+                <div class="stat-value" th:text="${#numbers.formatInteger(totalClicks, 0, 'COMMA')}">0</div>
+            </div>
+        </div>
+
+        <div class="user-details">
+            <h2>User Information</h2>
+            <div class="detail-row">
+                <div class="detail-label">User ID</div>
+                <div class="detail-value" th:text="${user.id}">1</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Username</div>
+                <div class="detail-value" th:text="${user.username}">username</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Email</div>
+                <div class="detail-value" th:text="${user.email}">email@example.com</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Display Name</div>
+                <div class="detail-value" th:text="${user.displayName ?: 'Not set'}">Display Name</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Role</div>
+                <div class="detail-value">
+                    <span class="badge" th:classappend="${user.role == 'ADMIN'} ? 'badge-admin' : 'badge-user'" th:text="${user.role}">ROLE</span>
+                </div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Status</div>
+                <div class="detail-value">
+                    <span class="badge" th:classappend="${user.isActive} ? 'badge-active' : 'badge-inactive'" th:text="${user.isActive ? 'Active' : 'Inactive'}">Status</span>
+                </div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Theme</div>
+                <div class="detail-value" th:text="${user.theme}">default</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Joined</div>
+                <div class="detail-value" th:text="${#temporals.format(user.createdAt, 'MMMM dd, yyyy HH:mm')}">Date</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Last Updated</div>
+                <div class="detail-value" th:text="${#temporals.format(user.updatedAt, 'MMMM dd, yyyy HH:mm')}">Date</div>
+            </div>
+            <div class="detail-row" th:if="${user.bio}">
+                <div class="detail-label">Bio</div>
+                <div class="detail-value" th:text="${user.bio}">Bio text</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Public Profile</div>
+                <div class="detail-value">
+                    <a th:href="@{/u/{username}(username=${user.username})}" target="_blank" class="btn-secondary">
+                        View Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="links-section">
+            <h2>User Links</h2>
+            <div th:if="${#lists.isEmpty(links)}" style="color: #ffffff; padding: 2rem; text-align: center;">
+                No links created yet.
+            </div>
+            <div th:each="link : ${links}" class="link-item">
+                <div class="link-header">
+                    <div class="link-title" th:text="${link.title}">Link Title</div>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <span class="badge" th:classappend="${link.isActive} ? 'badge-active' : 'badge-inactive'" th:text="${link.isActive ? 'Active' : 'Inactive'}">Status</span>
+                        <form method="post" th:action="@{/admin/links/{id}/delete(id=${link.id})}" style="display: inline; margin: 0;" 
+                              onsubmit="return confirm('Are you sure you want to delete this link?');">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button type="submit" class="btn-small btn-delete" style="padding: 0.25rem 0.75rem; font-size: 0.75rem; background: #ef4444; color: #ffffff; border: none; border-radius: 6px; cursor: pointer;">Delete</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="link-url" th:text="${link.url}">https://example.com</div>
+                <div class="link-stats">
+                    <span>ID: <span th:text="${link.id}">1</span></span>
+                    <span>👁️ Clicks: <span th:text="${link.clickCount}">0</span></span>
+                    <span>📅 Created: <span th:text="${#temporals.format(link.createdAt, 'MMM dd, yyyy')}">Date</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            document.querySelector('.theme-toggle').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+        }
+        
+        // Load saved preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.querySelector('.theme-toggle').textContent = 'Light Mode';
+        }
+    </script>
+</body>
+</html>

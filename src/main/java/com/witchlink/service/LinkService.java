@@ -48,6 +48,21 @@ public class LinkService {
     }
     
     @Transactional
+    public void deleteById(Long id) {
+        linkRepository.deleteById(id);
+    }
+    
+    public List<Link> findAll() {
+        return linkRepository.findAll();
+    }
+    
+    public List<Link> findByUserId(Long userId) {
+        return linkRepository.findAll().stream()
+                .filter(link -> link.getUser().getId().equals(userId))
+                .toList();
+    }
+    
+    @Transactional
     public void incrementClickCount(Long linkId) {
         Optional<Link> linkOpt = linkRepository.findById(linkId);
         if (linkOpt.isPresent()) {

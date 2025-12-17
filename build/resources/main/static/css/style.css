@@ -535,6 +535,72 @@ footer {
     margin-bottom: 30px;
 }
 
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    vertical-align: middle;
+}
+
+.toggle-switch input[type="checkbox"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+    margin: 0;
+}
+
+.toggle-switch label {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 34px;
+    background-color: var(--danger-color);
+    transition: 0.4s;
+    border-radius: 34px;
+    margin: 0;
+}
+
+.toggle-switch label:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    top: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked + label {
+    background-color: var(--success-color);
+}
+
+.toggle-switch input:checked + label:before {
+    transform: translateX(26px);
+}
+
+.toggle-switch input:focus + label {
+    box-shadow: 0 0 1px var(--success-color);
+}
+
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.toggle-description {
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .hero h1 {

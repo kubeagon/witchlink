@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>Admin Dashboard - WitchLink</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        body.dark-mode {
+            background: #1a1a2e;
+            color: #ffffff;
+        }
+        
+        body.dark-mode .container {
+            background: #16213e;
+            color: #ffffff;
+        }
+        
+        body.dark-mode .admin-nav a {
+            color: #ffffff;
+        }
+        
+        body.dark-mode .admin-nav a.active {
+            color: #ffffff;
+        }
+        
+        body.dark-mode .stat-value,
+        body.dark-mode .stat-label,
+        body.dark-mode .user-info h3,
+        body.dark-mode .user-meta,
+        body.dark-mode .badge {
+            color: #ffffff;
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            color: inherit;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .admin-nav {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .admin-nav a {
+            color: #000000;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .admin-nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .admin-nav a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+            color: #000000;
+        }
+        
+        .stat-label {
+            color: #000000;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .recent-users {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .user-item:last-child {
+            border-bottom: none;
+        }
+        
+        .user-info h3 {
+            margin: 0 0 0.25rem 0;
+            color: #000000;
+        }
+        
+        .user-meta {
+            color: #000000;
+            font-size: 0.9rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #000000;
+        }
+        
+        .badge-admin {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .badge-user {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .badge-active {
+            background: #10b981;
+        }
+        
+        .badge-inactive {
+            background: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleDarkMode()">Dark Mode</button>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Admin Dashboard</h1>
+        </div>
+
+        <nav class="admin-nav">
+            <a href="/admin" class="active">Overview</a>
+            <a href="/admin/users">Users</a>
+            <a href="/dashboard" style="margin-left: auto;">← Exit Admin</a>
+        </nav>
+
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Users</div>
+                <div class="stat-value" th:text="${totalUsers}">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Users</div>
+                <div class="stat-value" th:text="${activeUsers}">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Links</div>
+                <div class="stat-value" th:text="${totalLinks}">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Links</div>
+                <div class="stat-value" th:text="${activeLinks}">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Clicks</div>
+                <div class="stat-value" th:text="${#numbers.formatInteger(totalClicks, 0, 'COMMA')}">0</div>
+            </div>
+        </div>
+
+        <div class="recent-users">
+            <h2>Recent Users</h2>
+            <div th:each="user : ${recentUsers}" class="user-item">
+                <div class="user-info">
+                    <h3 th:text="${user.username}">Username</h3>
+                    <div class="user-meta">
+                        <span th:text="${user.email}">email@example.com</span> •
+                        <span th:text="${#temporals.format(user.createdAt, 'MMM dd, yyyy')}">Date</span>
+                    </div>
+                </div>
+                <div>
+                    <span class="badge" th:classappend="${user.role == 'ADMIN'} ? 'badge-admin' : 'badge-user'" th:text="${user.role}">ROLE</span>
+                    <span class="badge" th:classappend="${user.isActive} ? 'badge-active' : 'badge-inactive'" th:text="${user.isActive ? 'Active' : 'Inactive'}">Status</span>
+                    <a th:href="@{/admin/users/{id}(id=${user.id})}" class="btn-secondary" style="margin-left: 1rem;">View</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            document.querySelector('.theme-toggle').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+        }
+        
+        // Load saved preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.querySelector('.theme-toggle').textContent = 'Light Mode';
+        }
+    </script>
+</body>
+</html>
